@@ -4,11 +4,9 @@ import com.mojang.logging.LogUtils;
 import kembl.block_regen.item.mItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -35,9 +33,21 @@ import org.slf4j.Logger;
 public class BlockRegen
 {
     // Define mod id in a common place for everything to reference
-    public static final String MOD_ID = "block_regen";
+    public static final String MOD_ID = "blockregen";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
+
+    public static final RegistryObject<CreativeModeTab> BLOCK_REGEN_TAB =
+            CREATIVE_MODE_TABS.register("block_regen_tab", () -> CreativeModeTab.builder()
+            .icon(() -> new ItemStack(mItems.REGEN_TOOL.get()))
+            .title(Component.translatable("creativetab.block_regen_tab"))
+            .displayItems((parameters, output) -> {
+                output.accept(mItems.REGEN_TOOL.get());
+            }).build());
+
     public BlockRegen()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -46,6 +56,7 @@ public class BlockRegen
         modEventBus.addListener(this::commonSetup);
 
         mItems.register(modEventBus);
+        CREATIVE_MODE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
