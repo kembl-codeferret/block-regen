@@ -15,7 +15,7 @@ public class mItems
 
     public static final RegistryObject<Item> REGEN_TOOL =
             ITEMS.register("regen_tool",
-                    () -> new Item(new Item.Properties()));
+                    () -> new RegenToolItem(new Item.Properties()));
 
     public static void register(IEventBus eventBus)
     {
